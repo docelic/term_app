@@ -1,0 +1,17 @@
+name: term_app
+version: 0.1.0
+
+authors:
+  - Davor Ocelic <docelic@crystallabs.io>
+
+crystal: 0.31.1
+
+license: MIT
+
+dependencies:
+  event_handler:
+    path: ../event_handler
+    #version: 0.5.0
+  tput:
+    path: ../tput
+    #version: 0.1.0
