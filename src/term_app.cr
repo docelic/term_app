@@ -24,6 +24,11 @@ module TermApp
 
   @cursor_hidden = false
 
+  getter? _exiting : Bool = false
+
+  # TODO turn to is_alt?
+  getter is_alt : Bool = false
+
   def initialize(input, output)
     initialize(input: input, output: output)
   end
