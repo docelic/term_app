@@ -2,6 +2,7 @@ require "logger"
 require "event_handler"
 require "tput"
 
+require "./key"
 require "./events"
 require "./mouse"
 require "./keys"
@@ -72,16 +73,25 @@ module TermApp
     # }
 
     _listen_input
-    #spawn do loop do _listen_output end end
+    _listen_output
   end
 
   def _listen_input
+    @input.on(DataEvent) { |e|
+      emit_keys String.new e.data[...e.len]
+    }
+
+    # Make @input start emitting
     spawn do @input.emit_data end
-    #@input.on(KeypressEvent) { |e|
-    #}
+
+    on KeyPressEvent do |e|
+      puts e.key
+    end
   end
   def _listen_output
-    sleep 1
+    unless @output.tty?
+      STDERR.puts "Output is not a TTY."
+    end
   end
 
   def pause

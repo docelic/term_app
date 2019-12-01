@@ -65,5 +65,5 @@ module TermApp
 
   ::EventHandler.event DataEvent, data : Bytes, len : Int32
 
-  #::EventHandler.event KeypressEvent, ch : String?, key : Key?
+  ::EventHandler.event KeyPressEvent, key : ::TermApp::Key
 end

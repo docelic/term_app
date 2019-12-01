@@ -9,6 +9,7 @@ module TermApp
       :puts,
       :raw,
       :write,
+      :tty?,
       to: @io
 
     # TODO:
@@ -28,7 +29,6 @@ module TermApp
           bytes = Bytes.new 1024^2 # A whole megabight
           while len = io.read bytes
             next if len == 0
-            #emit_keys @input, bytes, len
             emit ::TermApp::DataEvent, bytes, len
           end
         end

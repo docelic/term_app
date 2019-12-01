@@ -49,25 +49,31 @@ module TermApp
 
     # Functions:
 
-    def emit_keys(stream, bytes, len)
-      # TODO can String and Bytes share same memory buffer?
+    #def emit_keys(stream, bytes, len)
+    #  # TODO can String and Bytes share same memory buffer?
 
-      # XXX
-      ## See if we need this or only the line from 'else' is needed.
-      #if len==1 && bytes[0]>127
-      #  bytes[0]-=128
-      #  # 27 == \e[ == ^[ == \x1b == ESC
-      #  string = String.new Bytes[27, bytes[0]]
-      #else
-        string = String.new bytes[0,len]
-      #end
+    #  # XXX
+    #  ## See if we need this or only the line from 'else' is needed.
+    #  #if len==1 && bytes[0]>127
+    #  #  bytes[0]-=128
+    #  #  # 27 == \e[ == ^[ == \x1b == ESC
+    #  #  string = String.new Bytes[27, bytes[0]]
+    #  #else
+    #    string = String.new bytes[0,len]
+    #  #end
 
-      emit_keys(stream, string)
-    end
+    #  emit_keys(stream, string)
+    #end
 
-    def emit_keys(stream, string)
+    # TODO Work needed here:
+    # Meta isn't quite OK recognized?
+    # C-<key> gives results like C-111 instead of C-o
+    # Ctrl+Shift doesn't produce different sequence than Ctrl alone?
+    # Ctrl+Meta does not recognize neither ctrl nor meta
+    # Compose or F keys cause Exception
+    def emit_keys(string)
 
-      Log.debug string.inspect
+      #Log.debug string.inspect
 
       buffer = [] of String
       start = 0
@@ -97,7 +103,7 @@ module TermApp
       buffer.each do |s|
 
         if mouse? s
-          Log.debug true, :emit_keys__mouse?
+          #Log.debug true, :emit_keys__mouse?
           next
         end
         #Log.debug false, :emit_keys__mouse?
@@ -111,13 +117,12 @@ module TermApp
 
         if s == "\r"
           # carriage return
-          name = "return"
+          #name = "return"
+          name = "enter" # XXX Let's see what happens with this approach
 
         elsif s == "\n"
-          # enter, should have been called linefeed
-          name = "enter"
-          # linefeed
-          # name = "linefeed"
+          # XXX
+          name = "linefeed" # Or "enter"?
 
         elsif s == "\t"
           # tab
@@ -271,40 +276,49 @@ module TermApp
           end
         end
 
+        full = name || code || sequence
+        full = "C-" + full if ctrl
+        full = "M-" + full if meta
+        full = "S-" + full if shift
+
+        name ||= ""
+        code ||= ""
+
         # Set 'key' to nil if key name wasn't recognized
         #key = name.nil? ? nil : {
         # Or always emit, because modifier info is useful?
-        key = {
-          sequence: s,
-          code: code,
-          name: name,
-          ctrl: ctrl,
-          meta: meta,
-          shift: shift
-        }
 
-        # TODO why the if?
-        #if s.size == 1
-          ch = s
+        emit KeyPressEvent,
+          ::TermApp::Key.new \
+            sequence: s,
+            code: code,
+            name: name,
+            full: full,
+            ctrl: ctrl,
+            meta: meta,
+            shift: shift
+
+        ##if s.size == 1
+        #  ch = s
+        ##end
+
+        #if key || ch
+        #  stream.emit KeyPressEvent, ch, key
+        #  ## if key && name == "return"
+        #  ##   var nkey = {}
+        #  ##   Object.keys(key).forEach(function(k
+        #  ##     nkey[k] = key[k]
+        #  ##   })
+        #  ##   nname = "enter"
+        #  ##   stream.emit("keypress", ch, nkey)
+        #  ## }
         #end
-
-        if key || ch
-          stream.emit KeypressEvent, ch, key
-          ## if key && name == "return"
-          ##   var nkey = {}
-          ##   Object.keys(key).forEach(function(k
-          ##     nkey[k] = key[k]
-          ##   })
-          ##   nname = "enter"
-          ##   stream.emit("keypress", ch, nkey)
-          ## }
-        end
       end
     end
 
     def mouse?(s)
       return true if
-        (s=~ /\x1b\[M/ ) ||
+        (s=~ /\x1b\[[MIO]/ ) || # Added M -> [MIO] later
         #(s=~ /\x1b\[M([\x00\x{0020}-\x{ffff}]{3})/ ) || Not necessary after first one
         (s=~ /\x1b\[(\d+;\d+;\d+)M/ ) ||
         (s=~ /\x1b\[<(\d+;\d+;\d+)([mM])/ ) ||
