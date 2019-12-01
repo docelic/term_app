@@ -2,7 +2,7 @@
 [![Version](https://img.shields.io/github/tag/crystallabs/term_app.svg?maxAge=360)](https://github.com/crystallabs/term_app/releases/latest)
 [![License](https://img.shields.io/github/license/crystallabs/term_app.svg)](https://github.com/crystallabs/term_app/blob/master/LICENSE)
 
-# Tput
+# Term_app
 
 Term_app is a minimal functional term/console app environment for Crystal.
 
@@ -33,8 +33,8 @@ dependencies:
 ## Usage in a nutshell
 
 Here is a basic example that starts the application, waits for keypresses or
-pasted data, prints the received content, and then fixes the cursor at screen
-character x = 10, y = 10:
+pasted data, prints the received content, and then sets the cursor at screen
+position x = 10, y = 10:
 
 ```crystal
 require "term_app"
