@@ -166,7 +166,7 @@ module TermApp
 
       # TODO
       #write = this.output.write
-      #this.output.write = function() {};
+      #this.output.write() {};
       # How to set/unset raw mode on IO::FileDescriptor?
       #if (this.input.setRawMode) {
       #  this.input.setRawMode(false);
@@ -267,6 +267,57 @@ module TermApp
      @jsbterm = false
      @gpm = false
     end
+
+    #def sigtstp(callback)
+    #  var resume = this.pause()
+    #
+    #  process.once('SIGCONT', function()
+    #    resume()
+    #    if (callback) callback()
+    #  })
+    #
+    #  process.kill(process.pid, 'SIGTSTP')
+    #}
+    #
+    #def pause(callback)
+    #  var self = this
+    #    , isAlt = this.isAlt
+    #    , mouseEnabled = this.mouseEnabled
+    #
+    #  this.lsaveCursor('pause')
+    #  //this.csr(0, screen.height - 1)
+    #  if (isAlt) this.normalBuffer()
+    #  this.showCursor()
+    #  if (mouseEnabled) this.disableMouse()
+    #
+    #  var write = this.output.write
+    #  this.output.write() {}
+    #  if (this.input.setRawMode)
+    #    this.input.setRawMode(false)
+    #  }
+    #  this.input.pause()
+    #
+    #  return this._resume()
+    #    delete self._resume
+    #
+    #    if (self.input.setRawMode)
+    #      self.input.setRawMode(true)
+    #    }
+    #    self.input.resume()
+    #    self.output.write = write
+    #
+    #    if (isAlt) self.alternateBuffer()
+    #    //self.csr(0, screen.height - 1)
+    #    if (mouseEnabled) self.enableMouse()
+    #    self.lrestoreCursor('pause', true)
+    #
+    #    if (callback) callback()
+    #  }
+    #}
+    #
+    #def resume()
+    #  if (this._resume) return this._resume()
+    #}
   end
 end
 

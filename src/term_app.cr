@@ -83,10 +83,6 @@ module TermApp
 
     # Make @input start emitting
     spawn do @input.emit_data end
-
-    on KeyPressEvent do |e|
-      puts e.key
-    end
   end
   def _listen_output
     unless @output.tty?
@@ -94,6 +90,7 @@ module TermApp
     end
   end
 
+  # Is this the right way to pause?
   def pause
     lsave_cursor :pause
 
@@ -141,75 +138,7 @@ module TermApp
     #if (callback) callback();
   end
 
-  # CSI Ps ; Ps ; Ps ; Ps ; Ps T
-  #   Initiate highlight mouse tracking.  Parameters are
-  #   [func;startx;starty;firstrow;lastrow].  See the section Mouse
-  #   Tracking.
-  def init_mouse_tracking(*arguments)
-    _write("\x1b[" + arguments.join(";") + "T")
-  end
-
-
-  class MouseType
-    # XXX can it be a record?
-    # XXX Why nils allowed?
-    property? normal                : Bool? = nil
-    property? all_motion            : Bool? = nil
-    property? vt200                 : Bool? = nil
-    property? vt200_hilite_tracking : Bool? = nil
-    property? x10                   : Bool? = nil
-    property? cell_motion           : Bool? = nil
-    property? send_focus            : Bool? = nil
-    property? utf                   : Bool? = nil
-    property? sgr                   : Bool? = nil
-    property? urxvt                 : Bool? = nil
-    property? dec                   : Bool? = nil
-    property? pterm                 : Bool? = nil
-    property? jsbterm               : Bool? = nil
-    property? gpm                   : Bool? = nil
-
-    def initialize(
-     @normal = nil,
-     @all_motion = nil,
-     @vt200 = nil,
-     @vt200_hilite_tracking = nil,
-     @x10 = nil,
-     @cell_motion = nil,
-     @send_focus = nil,
-     @utf = nil,
-     @sgr = nil,
-     @urxvt = nil,
-     @dec = nil,
-     @pterm = nil,
-     @jsbterm = nil,
-     @gpm = nil,
-    )
-      unless @normal.nil?
-        @vt200 = @normal
-        @allMotion = @normal
-      end
-    end
-
-    def disable!
-     @normal = false
-     @all_motion = false
-     @vt200 = false
-     @vt200_hilite_tracking = false
-     @x10mouse = false
-     @cell_motion = false
-     @send_focus = false
-     @utf = false
-     @sgr = false
-     @urxvt = false
-     @dec = false
-     @pterm = false
-     @jsbterm = false
-     @gpm = false
-    end
-  end
-
   class Data
     include ::TermApp
   end
 end
-
