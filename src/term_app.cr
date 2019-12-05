@@ -22,7 +22,7 @@ module TermApp
   #@ret = false
   getter tput : ::Tput::Data
 
-  @cursor_hidden = false
+  getter cursor_hidden = false
 
   getter? _exiting : Bool = false
 
