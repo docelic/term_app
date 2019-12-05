@@ -1,6 +1,7 @@
 module TermApp
   class Stream
     include EventHandler
+    include Keys
 
     @io : IO::FileDescriptor
 
@@ -30,6 +31,13 @@ module TermApp
           while len = io.read bytes
             next if len == 0
             emit ::TermApp::DataEvent, bytes, len
+
+            # Check if there are any listeners, and do not go
+            # processing the string if not.
+            # Not sure if this is desired or not.
+            #if @_event_keypressevent.size > 0
+              emit_keys String.new e.data[...e.len]
+            #end
           end
         end
       end

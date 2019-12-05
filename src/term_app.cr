@@ -11,7 +11,6 @@ require "./stream"
 module TermApp
 
   include EventHandler
-  include Keys
   include Mouse
 
   getter input : ::TermApp::Stream
@@ -82,10 +81,6 @@ module TermApp
   end
 
   def _listen_input
-    @input.on(DataEvent) { |e|
-      emit_keys String.new e.data[...e.len]
-    }
-
     # Make @input start emitting
     spawn do @input.emit_data end
   end

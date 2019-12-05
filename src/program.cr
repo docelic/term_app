@@ -4,7 +4,6 @@ module TermApp
 
   class Program
     include EventHandler
-    include Keys
     include Mouse
 
     # XXX Those 3 are a common pattern. Extract?

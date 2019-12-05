@@ -102,11 +102,12 @@ module TermApp
 
       buffer.each do |s|
 
-        if mouse? s
-          #Log.debug true, :emit_keys__mouse?
-          next
-        end
-        #Log.debug false, :emit_keys__mouse?
+        # TODO
+        #if mouse? s
+        #  #Log.debug true, :emit_keys__mouse?
+        #  next
+        #end
+        ##Log.debug false, :emit_keys__mouse?
 
         sequence = s
         ch = nil
@@ -314,18 +315,6 @@ module TermApp
         #  ## }
         #end
       end
-    end
-
-    def mouse?(s)
-      return true if
-        (s=~ /\x1b\[[MIO]/ ) || # Added M -> [MIO] later
-        #(s=~ /\x1b\[M([\x00\x{0020}-\x{ffff}]{3})/ ) || Not necessary after first one
-        (s=~ /\x1b\[(\d+;\d+;\d+)M/ ) ||
-        (s=~ /\x1b\[<(\d+;\d+;\d+)([mM])/ ) ||
-        (s=~ /\x1b\[<(\d+;\d+;\d+;\d+)&w/ ) ||
-        (s=~ /\x1b\[24([0135])~\[(\d+),(\d+)\}\r/ ) ||
-        (s=~ /\x1b\[(O|I)/ )
-      false
     end
   end
 end
