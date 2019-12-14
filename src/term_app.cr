@@ -4,7 +4,7 @@ require "tput"
 
 require "./key"
 require "./events"
-require "./mouse"
+#require "./mouse"
 require "./keys"
 require "./stream"
 
@@ -12,7 +12,7 @@ module TermApp
   VERSION = "0.1.1"
 
   include EventHandler
-  include Mouse
+  #include Mouse
 
   getter input : ::TermApp::Stream
   getter output : ::TermApp::Stream
