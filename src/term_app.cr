@@ -9,6 +9,7 @@ require "./keys"
 require "./stream"
 
 module TermApp
+  VERSION = "0.1.1"
 
   include EventHandler
   include Mouse

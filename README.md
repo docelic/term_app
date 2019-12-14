@@ -27,7 +27,7 @@ Add the dependency to `shard.yml`:
 dependencies:
   term_app:
     github: crystallabs/term_app
-    version: 0.1.0
+    version: 0.1.1
 ```
 
 ## Usage in a nutshell
