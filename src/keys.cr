@@ -146,7 +146,7 @@ module TermApp
         elsif s.size == 1 && s <= "\x1a"
           # ctrl+letter
           # TODO can't String.new from codepoint
-          name = (s.codepoint_at(0) + "a".codepoint_at(0) - 1).to_s # or .chr.to_s
+          name = (s.char_at(0).ord + "a".char_at(0).ord - 1).to_s # or .chr.to_s
           ctrl = true
 
         elsif s.size == 1 && s >= "a" && s <= "z"
