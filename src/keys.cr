@@ -156,6 +156,10 @@ module TermApp
         elsif s.bytesize == 1 && s <= "\x1a"
           # ctrl+letter
           name = (s[0].ord + 'a'.ord - 1).to_s # or .chr.to_s
+          # ( Or this:
+          # TODO can't String.new from codepoint
+          #name = (s.char_at(0).ord + "a".char_at(0).ord - 1).to_s # or .chr.to_s
+          # )
           ctrl = true
 
         elsif s.bytesize == 1 && s >= "a" && s <= "z"
