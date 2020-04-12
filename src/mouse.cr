@@ -761,4 +761,62 @@ module TermApp
       end
     end
   end
+
+  class MouseType
+    # XXX can it be a record?
+    # XXX Why nils allowed?
+    property? normal                : Bool? = nil
+    property? all_motion            : Bool? = nil
+    property? vt200                 : Bool? = nil
+    property? vt200_hilite_tracking : Bool? = nil
+    property? x10                   : Bool? = nil
+    property? cell_motion           : Bool? = nil
+    property? send_focus            : Bool? = nil
+    property? utf                   : Bool? = nil
+    property? sgr                   : Bool? = nil
+    property? urxvt                 : Bool? = nil
+    property? dec                   : Bool? = nil
+    property? pterm                 : Bool? = nil
+    property? jsbterm               : Bool? = nil
+    property? gpm                   : Bool? = nil
+
+    def initialize(
+     @normal = nil,
+     @all_motion = nil,
+     @vt200 = nil,
+     @vt200_hilite_tracking = nil,
+     @x10 = nil,
+     @cell_motion = nil,
+     @send_focus = nil,
+     @utf = nil,
+     @sgr = nil,
+     @urxvt = nil,
+     @dec = nil,
+     @pterm = nil,
+     @jsbterm = nil,
+     @gpm = nil,
+    )
+      unless @normal.nil?
+        @vt200 = @normal
+        @allMotion = @normal
+      end
+    end
+
+    def disable!
+     @normal = false
+     @all_motion = false
+     @vt200 = false
+     @vt200_hilite_tracking = false
+     @x10mouse = false
+     @cell_motion = false
+     @send_focus = false
+     @utf = false
+     @sgr = false
+     @urxvt = false
+     @dec = false
+     @pterm = false
+     @jsbterm = false
+     @gpm = false
+    end
+  end
 end

@@ -2,6 +2,8 @@ module TermApp
   # Module for recognizing and sending keypresses
   module Keys
 
+    # TODO maybe do meta=true if s[0].ord==195?
+
     # Some patterns seen in terminal key escape codes, derived from combos seen
     # at http://www.midnight-commander.org/browser/lib/tty/key.c
 
@@ -72,8 +74,20 @@ module TermApp
     # Ctrl+Meta does not recognize neither ctrl nor meta
     # Compose or F keys cause Exception
     def emit_keys(string)
-
       #Log.debug string.inspect
+
+      #if string.size == 1 && string.bytesize == 1 && string[0].ord > 127
+      if string.bytesize == 1 && string[0].ord > 127
+        s = String.new Bytes[27, string[0].ord-128] # 27 == \xb1
+      end
+
+      # TODO
+      # Also, should this be here or in the buffer.each loop below
+      #if mouse? string
+      #  #Log.debug true, :emit_keys__mouse?
+      #  next
+      #end
+      ##Log.debug false, :emit_keys__mouse?
 
       buffer = [] of String
       start = 0
@@ -97,20 +111,15 @@ module TermApp
       if start < string.size
         buffer += string[start..].split("")
       end
+      
+      STDERR.puts buffer.inspect
 
       #Log.debug buffer.inspect, :emit_keys__buffer
 
       buffer.each do |s|
-
-        # TODO
-        #if mouse? s
-        #  #Log.debug true, :emit_keys__mouse?
-        #  next
-        #end
-        ##Log.debug false, :emit_keys__mouse?
+        #p "SIZE #{s.size}, BYTESIZE #{s.bytesize}, BYTES: #{s.to_slice}, CODEPOINTS #{s.codepoints}"
 
         sequence = s
-        ch = nil
         name, code = nil, nil
         ctrl, meta, shift = false, false, false
 
@@ -132,24 +141,24 @@ module TermApp
         elsif s == "\b" || s == "\x7f" || s == "\x1b\x7f" || s == "\x1b\b"
           # backspace or ctrl+h
           name = "backspace"
-          meta = (s.char_at(0) == "\x1b")
+          meta = (s[0].ord == 27) # 27 == \x1b
 
         elsif s == "\x1b" || s == "\x1b\x1b"
           # escape key
           name = "escape"
-          meta = (s.size == 2)
+          # TODO .bytesize or .size? (Here and in this whole function)
+          meta = (s.bytesize == 2)
 
         elsif s == " " || s == "\x1b "
           name = "space"
-          meta = (s.size == 2)
+          meta = (s.bytesize == 2)
 
-        elsif s.size == 1 && s <= "\x1a"
+        elsif s.bytesize == 1 && s <= "\x1a"
           # ctrl+letter
-          # TODO can't String.new from codepoint
-          name = (s.codepoint_at(0) + "a".codepoint_at(0) - 1).to_s # or .chr.to_s
+          name = (s[0].ord + 'a'.ord - 1).to_s # or .chr.to_s
           ctrl = true
 
-        elsif s.size == 1 && s >= "a" && s <= "z"
+        elsif s.bytesize == 1 && s >= "a" && s <= "z"
           # lowercase letter
           name = s
 
@@ -169,8 +178,8 @@ module TermApp
 
           # reassemble the code leaving out leading \x1b"s,
           # the modifier key bitflag and any meaningless "1;" sequence
-          code2 = (parts[1] || "") + (parts[2] || "") + (parts[4] || "") + (parts[9] || "")
-          modifier = (parts[3] || parts[8] || 1).to_i - 1
+          code2 = (parts[1]? || "") + (parts[2]? || "") + (parts[4]? || "") + (parts[9]? || "")
+          modifier = (parts[3]? || parts[8]? || 1).to_i - 1
 
           # Parse the key modifier
           ctrl = !!(modifier & 4)
@@ -277,10 +286,12 @@ module TermApp
           end
         end
 
-        full = name || code || sequence
-        full = "C-" + full if ctrl
-        full = "M-" + full if meta
-        full = "S-" + full if shift
+        full = String.build do |s|
+          s << "S-" if shift
+          s << "M-" if meta
+          s << "C-" if ctrl
+          s << name || code || sequence
+        end
 
         name ||= ""
         code ||= ""
@@ -298,22 +309,6 @@ module TermApp
             ctrl: ctrl,
             meta: meta,
             shift: shift
-
-        ##if s.size == 1
-        #  ch = s
-        ##end
-
-        #if key || ch
-        #  stream.emit KeyPressEvent, ch, key
-        #  ## if key && name == "return"
-        #  ##   var nkey = {}
-        #  ##   Object.keys(key).forEach(function(k
-        #  ##     nkey[k] = key[k]
-        #  ##   })
-        #  ##   nname = "enter"
-        #  ##   stream.emit("keypress", ch, nkey)
-        #  ## }
-        #end
       end
     end
   end
